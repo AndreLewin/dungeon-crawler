@@ -1,0 +1,46 @@
+$padding: 20px 20px 0px 20px;
+$border: 1px solid grey;
+$cellSize: 20px;
+$animation: 0.5s linear;
+
+#my-wrapper {
+  .container {
+    padding: $padding;
+  }
+
+  .barDiv {
+    margin: 10px 0px 10px 0px;
+    width: 400px;
+
+    .bar {
+      margin: 0px 0px 0px 0px;
+    }
+  }
+
+  .Board {
+    padding: $padding;
+
+    table {
+      border: $border;
+      border-spacing: 0;
+    }
+
+    td {
+      border: $border;
+      height: $cellSize;
+      width: $cellSize;
+
+      &:hover {
+        opacity: 0.3;
+      }
+    }
+
+    .dead {
+      background: #f4f4f4;
+    }
+
+    .alive {
+      background: green;
+    }
+  }
+}

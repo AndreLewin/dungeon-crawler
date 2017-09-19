@@ -1,0 +1,10 @@
+.idea
+.git
+.DS_Store
+/*.log
+node_modules/
+/coverage/
+/lib/
+/dist/
+/public/style/themes
+/public/style/semantic.min.css
