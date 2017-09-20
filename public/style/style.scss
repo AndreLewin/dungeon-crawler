@@ -8,12 +8,20 @@ $animation: 0.5s linear;
     padding: $padding;
   }
 
+  .sameLine {
+    display: flex;
+  }
+
   .barDiv {
     margin: 10px 0px 10px 0px;
-    width: 400px;
+
+    .barLabel {
+      width: 30px;
+    }
 
     .bar {
       margin: 0px 0px 0px 0px;
+      width: 400px;
     }
   }
 

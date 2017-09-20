@@ -7,17 +7,14 @@ import { APP_NAME } from '../shared/config';
 import { playGameAC, pauseGameAC, clearGridAC, randomiseGridAC, switchStateAC, nextGenerationAC } from './index';
 
 
-const LevelCounterCom = ({ level, atkBonus }) => (
-    <Header.Subheader>
-        Level: {level}    Atk: {level}+{atkBonus}
-    </Header.Subheader>
+const HeaderCn = () => (
+    <Header as='h2'>
+        <Icon name='compass' />
+        <Header.Content>
+            {APP_NAME}
+        </Header.Content>
+    </Header>
 );
-const LevelCounterCn = connect(
-    state => ({
-        level: state.get('level'),
-        atkBonus: state.get('weapon').get('atkBonus')
-    })
-)(LevelCounterCom);
 
 
 const LabelsCom = ({ level, weapon }) => (
@@ -49,8 +46,14 @@ const LabelsCn = connect(
 
 const BarsCom = ({ hp, xp, level }) => (
     <div className="barDiv">
-        <Progress className="bar" value={hp} total={5+level*5} progress='ratio' color='red'/>
-        <Progress className="bar" value={xp} total={5+level*5} progress='percent' color='blue'/>
+        <div className="sameLine">
+            <Label className="barLabel" icon='heart' color='red'/>
+            <Progress className="bar" value={hp} total={5+level*5} progress='ratio' color='red'/>
+        </div>
+        <div className="sameLine">
+            <Label className="barLabel" icon='add' color='blue'/>
+            <Progress className="bar" value={xp} total={5+level*5} progress='percent' color='blue'/>
+        </div>
     </div>
 );
 const BarsCn = connect (
@@ -208,15 +211,7 @@ const TimerCn = connect(
 const App = () => (
     <div id="my-wrapper">
         <div className='container'>
-            <Header as='h2'>
-                <Icon name='blind' />
-                <Header.Content>
-                    {APP_NAME}
-                    <Header.Subheader>
-                        <LevelCounterCn />
-                    </Header.Subheader>
-                </Header.Content>
-            </Header>
+            <HeaderCn/>
             <LabelsCn/>
             <BarsCn/>
             <ButtonsCn/>
