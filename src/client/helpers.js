@@ -1,3 +1,7 @@
+export const XP_PER_LEVEL = 10;
+export const DEFAULT_HP = 5;
+export const HP_PER_LEVEL = 5;
+
 const MAX_LENGTH = 20;
 const MAX_HEIGHT = 20;
 const PROBABILITY_ALIVE = 1/6;

@@ -4,8 +4,8 @@ import { Icon, Label, Progress, Segment, Header, Button, Divider, Grid, Table } 
 
 import '../../public/style/style.scss';
 import { APP_NAME } from '../shared/config';
-import { playGameAC, pauseGameAC, clearGridAC, randomiseGridAC, switchStateAC, nextGenerationAC } from './index';
-
+import { giveXPAC, giveHPAC, removeHPAC, pauseGameAC, clearGridAC, randomiseGridAC, switchStateAC, nextGenerationAC } from './index';
+import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL } from './helpers'
 
 const HeaderCn = () => (
     <Header as='h2'>
@@ -48,11 +48,11 @@ const BarsCom = ({ hp, xp, level }) => (
     <div className="barDiv">
         <div className="sameLine">
             <Label className="barLabel" icon='heart' color='red'/>
-            <Progress className="bar" value={hp} total={5+level*5} progress='ratio' color='red'/>
+            <Progress className="bar" value={hp} total={DEFAULT_HP+level*HP_PER_LEVEL} progress='percent' color='red' precision={0}/>
         </div>
         <div className="sameLine">
             <Label className="barLabel" icon='add' color='blue'/>
-            <Progress className="bar" value={xp} total={5+level*5} progress='percent' color='blue'/>
+            <Progress className="bar" value={xp} total={level*XP_PER_LEVEL} progress='percent' color='blue' precision={0}/>
         </div>
     </div>
 );
@@ -65,22 +65,23 @@ const BarsCn = connect (
 )(BarsCom);
 
 
-const ButtonsCom = ({ running, handlePlayClick, handlePauseClick, handleClearClick, handleRandomiseClick, handleNextGeneration }) => (
+const ButtonsCom = ({ hp, handleXPClick, handleHPClick, handleRHPClick, handleRandomiseClick, handleNextGeneration }) => (
     <div>
-        <Button positive={!running} icon='play' content='Play' onClick={handlePlayClick} />
-        <Button negative={running} icon='pause' content='Pause' onClick={handlePauseClick} />
-        <Button icon='bomb' content='Clear' onClick={handleClearClick} />
+        {hp===0 && <Button content='You are dead'/>}
+        <Button icon='play' content='Give XP' onClick={handleXPClick} />
+        <Button icon='pause' content='Give HP' onClick={handleHPClick} />
+        <Button icon='bomb' content='Remove HP' onClick={handleRHPClick} />
         <Button icon='shuffle' content='Randomise' onClick={handleRandomiseClick} />
     </div>
 );
 const ButtonsCn = connect(
     state => ({
-        running: state.get('running'),
+        hp: state.get('hp'),
     }),
     dispatch => ({
-        handlePlayClick: () => { dispatch(playGameAC()) },
-        handlePauseClick: () => { dispatch(pauseGameAC()) },
-        handleClearClick: () => { dispatch(clearGridAC()) },
+        handleXPClick: () => { dispatch(giveXPAC(1)) },
+        handleHPClick: () => { dispatch(giveHPAC(1)) },
+        handleRHPClick: () => { dispatch(removeHPAC(1)) },
         handleRandomiseClick: () => { dispatch(randomiseGridAC()) },
         handleNextGeneration: () => { dispatch(nextGenerationAC()) }
     })
