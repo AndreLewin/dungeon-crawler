@@ -4,7 +4,7 @@ import { Icon, Label, Progress, Segment, Header, Button, Divider, Grid, Table } 
 
 import '../../public/style/style.scss';
 import { APP_NAME } from '../shared/config';
-import { giveXPAC, giveHPAC, removeHPAC, pauseGameAC, clearGridAC, randomiseGridAC, switchStateAC, nextGenerationAC } from './index';
+import { giveXPAC, giveHPAC, removeHPAC, upgradeWeaponAC, pauseGameAC, clearGridAC, randomiseGridAC, switchStateAC, nextGenerationAC } from './index';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL } from './helpers'
 
 const HeaderCn = () => (
@@ -25,7 +25,7 @@ const LabelsCom = ({ level, weapon }) => (
             <Label.Detail>{level}</Label.Detail>
         </Label>
         <Label as='a' color='teal' image>
-            <Icon name="eraser" />
+            <Icon name="lightning" />
             Attack Power
             <Label.Detail>{level}+{weapon.get('atkBonus')}</Label.Detail>
         </Label>
@@ -65,13 +65,13 @@ const BarsCn = connect (
 )(BarsCom);
 
 
-const ButtonsCom = ({ hp, handleXPClick, handleHPClick, handleRHPClick, handleRandomiseClick, handleNextGeneration }) => (
+const ButtonsCom = ({ hp, handleXPClick, handleHPClick, handleRHPClick, handleUpgradeClick, handleNextGeneration }) => (
     <div>
         {hp===0 && <Button content='You are dead'/>}
         <Button icon='play' content='Give XP' onClick={handleXPClick} />
         <Button icon='pause' content='Give HP' onClick={handleHPClick} />
         <Button icon='bomb' content='Remove HP' onClick={handleRHPClick} />
-        <Button icon='shuffle' content='Randomise' onClick={handleRandomiseClick} />
+        <Button icon='shuffle' content='Upgrade Weapon' onClick={handleUpgradeClick} />
     </div>
 );
 const ButtonsCn = connect(
@@ -82,7 +82,7 @@ const ButtonsCn = connect(
         handleXPClick: () => { dispatch(giveXPAC(1)) },
         handleHPClick: () => { dispatch(giveHPAC(1)) },
         handleRHPClick: () => { dispatch(removeHPAC(1)) },
-        handleRandomiseClick: () => { dispatch(randomiseGridAC()) },
+        handleUpgradeClick: () => { dispatch(upgradeWeaponAC()) },
         handleNextGeneration: () => { dispatch(nextGenerationAC()) }
     })
 )(ButtonsCom);

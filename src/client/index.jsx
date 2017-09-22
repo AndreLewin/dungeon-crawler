@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 import App from './app';
 import { APP_CONTAINER_SELECTOR } from '../shared/config';
 import { isProd } from '../shared/util';
+import weapons from './weapons';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL, createGrid, calculateGridNextGen } from './helpers'
 
 /* Actions */
@@ -21,6 +22,8 @@ const GIVE_HP = 'GIVE_HP';
 export const giveHPAC = createAction(GIVE_HP);
 const REMOVE_HP = 'REMOVE_HP';
 export const removeHPAC = createAction(REMOVE_HP);
+const UPGRADE_WEAPON = 'UPGRADE_WEAPON';
+export const upgradeWeaponAC = createAction(UPGRADE_WEAPON);
 
 const PLAY_GAME = 'PLAY_GAME';
 export const playGameAC = createAction(PLAY_GAME);
@@ -45,7 +48,8 @@ const initialState = Immutable.fromJS({
     hp: 10,
     xpTot: 0,
     xp: 0,
-    weapon: {icon: "spoon", name: "Spoon", atkBonus: 1},
+    currentWeaponId: 0,
+    weapon: weapons[0],
     map: undefined // Array[30][30] of {id: 0, data: {icon: , hp:  , level: , xpDrop: }}
     // 0 = Free space ; 1 = Wall ; 2 = Player ; 3 = Weapon (has data) ; 4 = Potion (has data) ; 5 = Monster (has data)
     // The Id tells what action walking toward a square will dispatch
@@ -72,6 +76,14 @@ const reducer = (state = initialState, action) => {
             return state.update('hp', value => (value + action.payload > DEFAULT_HP+state.get('level')*HP_PER_LEVEL) ? DEFAULT_HP+state.get('level')*HP_PER_LEVEL : value + action.payload );
         case REMOVE_HP:
             return state.update('hp', value => (value - action.payload <= 0) ? 0 : value - action.payload );
+        case UPGRADE_WEAPON: {
+            const currentWeaponId = state.get('currentWeaponId');
+            if (currentWeaponId < weapons.length - 1) {
+                return state.update('currentWeaponId', value => value + 1).set('weapon', Immutable.fromJS(weapons[currentWeaponId + 1]));
+            } else {
+                return state;
+            }
+        }
         case PLAY_GAME:
             return state.set('running', true);
         case PAUSE_GAME:
