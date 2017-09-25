@@ -4,7 +4,7 @@ import { Icon, Label, Progress, Segment, Header, Button, Divider, Grid, Table } 
 
 import '../../public/style/style.scss';
 import { APP_NAME } from '../shared/config';
-import { giveXPAC, giveHPAC, removeHPAC, upgradeWeaponAC, pauseGameAC, clearGridAC, randomiseGridAC, switchStateAC, nextGenerationAC } from './index';
+import { giveXPAC, giveHPAC, removeHPAC, upgradeWeaponAC, moveAC } from './index';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL } from './helpers'
 
 const HeaderCn = () => (
@@ -82,8 +82,7 @@ const ButtonsCn = connect(
         handleXPClick: () => { dispatch(giveXPAC(1)) },
         handleHPClick: () => { dispatch(giveHPAC(1)) },
         handleRHPClick: () => { dispatch(removeHPAC(1)) },
-        handleUpgradeClick: () => { dispatch(upgradeWeaponAC()) },
-        handleNextGeneration: () => { dispatch(nextGenerationAC()) }
+        handleUpgradeClick: () => { dispatch(upgradeWeaponAC()) }
     })
 )(ButtonsCom);
 
@@ -102,9 +101,9 @@ const Square = ({ id }) => {
 
     return <td>{iconToReturn}</td>;
 };
-const BoardCom = ({ grid }) => {
+const BoardCom = ({ grid, handleKeyUp }) => {
     return (
-        <div className='Board'>
+        <div className='Board' onKeyUp={handleKeyUp} >
             <table>
                 <tbody>
                     {grid.map((row, i) => (
@@ -127,41 +126,11 @@ const BoardCom = ({ grid }) => {
 const BoardCn = connect(
     state => ({
         grid: state.get('grid'),
-    })
-)(BoardCom);
-
-
-// Dispatch the grid each half-second when the game is running
-class TimerCom extends React.Component {
-    componentDidMount() {
-        this.timerID = setInterval(
-            () => this.tick(),
-            500
-        );
-    };
-
-    componentWillUnmount() {
-        clearInterval(this.timerID);
-    };
-
-    tick() {
-        if(this.props.running){
-            this.props.handleTick();
-        }
-    };
-
-    render() {
-        return (null);
-    };
-}
-const TimerCn = connect(
-    state => ({
-        running: state.get('running'),
     }),
     dispatch => ({
-        handleTick: (payload) => { dispatch(nextGenerationAC()) }
+        handleKeyUp: (event) => { dispatch(moveAC(event)) },
     })
-)(TimerCom);
+)(BoardCom);
 
 
 const App = () => (
@@ -173,7 +142,6 @@ const App = () => (
             <ButtonsCn/>
         </div>
         <BoardCn />
-        <TimerCn />
     </div>
 );
 
