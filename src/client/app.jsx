@@ -87,63 +87,22 @@ const ButtonsCn = connect(
     })
 )(ButtonsCom);
 
-/*
-// It is concise, it works, but it is bad practice to create a function in the render
-// https://daveceddia.com/avoid-bind-when-passing-props/
-const Square = ({alive, row, column, handleSquareClick}) => {
-    return (
-        <td
-            className={alive ? "alive" : "dead"}
-            onClick={() => handleSquareClick({i:row, j:column})}
-        > </td>
-    );
+
+const Square = ({ id }) => {
+    let iconToReturn;
+
+    switch(id) {
+        case 1:
+            iconToReturn = <Icon name='align justify' disabled />;
+            break;
+        case 2:
+            iconToReturn = <Icon name='user' />;
+            break;
+    }
+
+    return <td>{iconToReturn}</td>;
 };
-*/
-/*
-// This solution does not work, you will be stuck in a loop of errors
-// https://stackoverflow.com/questions/37387351/reactjs-warning-setstate-cannot-update-during-an-existing-state-transiti
-class Square extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick(object) {
-        this.props.handleSquareClick(object)
-    }
-
-    render() {
-        return (
-            <td
-                className={this.props.alive ? "alive" : "dead"}
-                onClick={this.handleClick({i:this.props.row, j:this.props.column})}
-            > </td>
-        );
-    }
-}
-*/
-// This will work, remember to give onClick the function you binded, so it is called on click
-// If you give arguments in the "onClick", you call the function immediately at rendering!
-class Square extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick(object) {
-        this.props.handleSquareClick({i:this.props.row, j:this.props.column})
-    }
-
-    render() {
-        return (
-            <td
-                className={this.props.alive ? "alive" : "dead"}
-                onClick={this.handleClick}
-            > </td>
-        );
-    }
-}
-const BoardCom = ({ grid, handleSquareClick }) => {
+const BoardCom = ({ grid }) => {
     return (
         <div className='Board'>
             <table>
@@ -152,11 +111,10 @@ const BoardCom = ({ grid, handleSquareClick }) => {
                         <tr key={i}>
                             {row.map((square, j) => (
                                 <Square
-                                    alive={square}
+                                    id={square.get('id')}
                                     key={j}
                                     row={i}
                                     column={j}
-                                    handleSquareClick={handleSquareClick}
                                 />
                             ))}
                         </tr>
@@ -169,9 +127,6 @@ const BoardCom = ({ grid, handleSquareClick }) => {
 const BoardCn = connect(
     state => ({
         grid: state.get('grid'),
-    }),
-    dispatch => ({
-        handleSquareClick: (payload) => { dispatch(switchStateAC(payload)) }
     })
 )(BoardCom);
 

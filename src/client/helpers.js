@@ -2,10 +2,53 @@ export const XP_PER_LEVEL = 10;
 export const DEFAULT_HP = 5;
 export const HP_PER_LEVEL = 5;
 
+export const idMap = {0: 'void', 1: 'wall', 2: 'player'};
+
 const MAX_LENGTH = 20;
 const MAX_HEIGHT = 20;
 const PROBABILITY_ALIVE = 1/6;
 
+export const createGrid = () => {
+    let grid = new Array(MAX_HEIGHT);
+    for (let i = 0; i < MAX_HEIGHT; i++) {
+        grid[i] = new Array(MAX_LENGTH);
+        for (let j = 0; j < MAX_LENGTH; j++) {
+            grid[i][j] = {id: Math.random() < PROBABILITY_ALIVE, data: undefined};
+        }
+    }
+
+    grid = drawBorders(grid);
+    grid = placePlayer(grid);
+    return grid;
+};
+
+const drawBorders = (grid) => {
+    // Horizontal lines
+    for (let j = 0; j < MAX_LENGTH; j++){
+        grid[0][j] = {id: 1, data: undefined};
+        grid[MAX_HEIGHT-1][j] = {id: 1, data: undefined};
+    }
+
+    // Vertical lines
+    for (let i = 0; i < MAX_HEIGHT; i++){
+        grid[i][0] = {id: 1, data: undefined};
+        grid[i][MAX_LENGTH-1] = {id: 1, data: undefined};
+    }
+
+    return grid;
+};
+
+const placePlayer = (grid) => {
+    grid[getRandomInt(1, MAX_HEIGHT-2)][getRandomInt(1, MAX_LENGTH-2)] = {id: 2, data: undefined};
+
+    return grid;
+};
+
+const getRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+/*
 export const createGrid = (random) => {
     const grid = new Array(MAX_HEIGHT);
     for (let i = 0; i < MAX_HEIGHT; i++) {
@@ -16,6 +59,8 @@ export const createGrid = (random) => {
     }
     return grid;
 };
+*/
+
 
 export const calculateGridNextGen = (grid) => {
     const nextGrid = JSON.parse(JSON.stringify(grid));

@@ -43,14 +43,15 @@ export const nextGenerationAC = createAction(NEXT_GENERATION);
 const initialState = Immutable.fromJS({
     generation: 1,
     running: false,
-    grid: createGrid(true),
     level: 1,
     hp: 10,
     xpTot: 0,
     xp: 0,
     currentWeaponId: 0,
     weapon: weapons[0],
-    map: undefined // Array[30][30] of {id: 0, data: {icon: , hp:  , level: , xpDrop: }}
+    grid: createGrid()
+
+    // Array[30][30] of {id: 0, data: {icon: , hp:  , level: , xpDrop: }}
     // 0 = Free space ; 1 = Wall ; 2 = Player ; 3 = Weapon (has data) ; 4 = Potion (has data) ; 5 = Monster (has data)
     // The Id tells what action walking toward a square will dispatch
 
