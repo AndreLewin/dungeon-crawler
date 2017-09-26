@@ -101,9 +101,9 @@ const Square = ({ id }) => {
 
     return <td>{iconToReturn}</td>;
 };
-const BoardCom = ({ grid, handleKeyUp }) => {
+const BoardCom = ({ grid }) => {
     return (
-        <div className='Board' onKeyUp={handleKeyUp} >
+        <div className='Board' >
             <table>
                 <tbody>
                     {grid.map((row, i) => (
@@ -126,11 +126,38 @@ const BoardCom = ({ grid, handleKeyUp }) => {
 const BoardCn = connect(
     state => ({
         grid: state.get('grid'),
-    }),
-    dispatch => ({
-        handleKeyUp: (event) => { dispatch(moveAC(event)) },
     })
 )(BoardCom);
+
+
+class KeyboardCom extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleKeyup = this.handleKeyup.bind(this);
+    }
+
+    handleKeyup(event) {
+        this.props.handleKeyUp(event.keyCode);
+    }
+
+    componentDidMount() {
+        window.addEventListener('keyup', this.handleKeyup );
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('keyup', this.handleKeyup );
+    }
+
+    render() {
+        return null;
+    }
+}
+const KeyboardCn = connect(
+    undefined ,
+    dispatch => ({
+        handleKeyUp: (payload) => { console.log(payload)/* dispatch(moveAC(payload)) */},
+    })
+)(KeyboardCom);
 
 
 const App = () => (
@@ -142,6 +169,7 @@ const App = () => (
             <ButtonsCn/>
         </div>
         <BoardCn />
+        <KeyboardCn />
     </div>
 );
 
