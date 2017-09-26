@@ -36,6 +36,9 @@ const initialState = Immutable.fromJS({
     xp: 0,
     currentWeaponId: 0,
     weapon: weapons[0],
+    x: 5, // x is going down
+    y: 5, // y is going right
+    // TODO: set x y to position = {x, y}
     grid: createGrid()
 
     // Array[30][30] of {id: 0, data: {icon: , hp:  , level: , xpDrop: }}
@@ -73,7 +76,47 @@ const reducer = (state = initialState, action) => {
             }
         }
         case MOVE: {
+
+            const currentPos = {x: state.get('x'), y: state.get('y')};
+            let targetPos = {x: undefined, y: undefined};
+
+            // Handle key press
+            switch(action.payload) {
+                case 37: // Left
+                    targetPos = {x: currentPos.x, y: currentPos.y - 1};
+                    break;
+                case 38: // Up
+                    targetPos = {x: currentPos.x - 1, y: currentPos.y};
+                    break;
+                case 39: // Right
+                    targetPos = {x: currentPos.x, y: currentPos.y + 1};
+                    break;
+                case 40: // Down
+                    targetPos = {x: currentPos.x + 1, y: currentPos.y};
+                    break;
+            }
+
+            const movePlayer = () => {
+                state = state.setIn(['grid', targetPos.x, targetPos.y, 'nature'], 'player').setIn(['grid', targetPos.x, targetPos.y, 'data'], undefined);
+                state = state.setIn(['grid', currentPos.x, currentPos.y, 'nature'], 'void').setIn(['grid', targetPos.x, targetPos.y, 'data'], undefined);
+                state = state.set('x', targetPos.x).set('y',  targetPos.y);
+            };
+
+            // What is the player trying to walk into?
+            const idTarget = state.getIn(['grid', targetPos.x, targetPos.y, 'nature']);
+            switch(idTarget) {
+                case 'void':
+                    console.log("There is nothing there, you can go");
+                    movePlayer();
+                    break;
+                case 'wall':
+                    console.log("There is a wall, you can't go there");
+                    break;
+            }
+
+            
             console.log(action.payload);
+            console.log(targetPos);
             return state;
         }
         default:

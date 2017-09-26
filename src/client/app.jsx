@@ -87,14 +87,14 @@ const ButtonsCn = connect(
 )(ButtonsCom);
 
 
-const Square = ({ id }) => {
+const Square = ({ nature }) => {
     let iconToReturn;
 
-    switch(id) {
-        case 1:
+    switch(nature) {
+        case 'wall':
             iconToReturn = <Icon name='align justify' disabled />;
             break;
-        case 2:
+        case 'player':
             iconToReturn = <Icon name='user' />;
             break;
     }
@@ -110,7 +110,7 @@ const BoardCom = ({ grid }) => {
                         <tr key={i}>
                             {row.map((square, j) => (
                                 <Square
-                                    id={square.get('id')}
+                                    nature={square.get('nature')}
                                     key={j}
                                     row={i}
                                     column={j}
@@ -155,7 +155,7 @@ class KeyboardCom extends React.Component {
 const KeyboardCn = connect(
     undefined ,
     dispatch => ({
-        handleKeyUp: (payload) => { console.log(payload)/* dispatch(moveAC(payload)) */},
+        handleKeyUp: (payload) => { dispatch(moveAC(payload)) },
     })
 )(KeyboardCom);
 

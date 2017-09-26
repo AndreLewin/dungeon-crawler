@@ -6,14 +6,14 @@ export const idMap = {0: 'void', 1: 'wall', 2: 'player'};
 
 const MAX_LENGTH = 20;
 const MAX_HEIGHT = 20;
-const PROBABILITY_ALIVE = 1/6;
+const PROBABILITY_WALL = 1/6;
 
 export const createGrid = () => {
     let grid = new Array(MAX_HEIGHT);
     for (let i = 0; i < MAX_HEIGHT; i++) {
         grid[i] = new Array(MAX_LENGTH);
         for (let j = 0; j < MAX_LENGTH; j++) {
-            grid[i][j] = {id: Math.random() < PROBABILITY_ALIVE, data: undefined};
+            grid[i][j] = {nature: (Math.random() < PROBABILITY_WALL ? 'wall' : 'void'), data: undefined};
         }
     }
 
@@ -25,22 +25,22 @@ export const createGrid = () => {
 const drawBorders = (grid) => {
     // Horizontal lines
     for (let j = 0; j < MAX_LENGTH; j++){
-        grid[0][j] = {id: 1, data: undefined};
-        grid[MAX_HEIGHT-1][j] = {id: 1, data: undefined};
+        grid[0][j] = {nature: 'wall', data: undefined};
+        grid[MAX_HEIGHT-1][j] = {nature: 'wall', data: undefined};
     }
 
     // Vertical lines
     for (let i = 0; i < MAX_HEIGHT; i++){
-        grid[i][0] = {id: 1, data: undefined};
-        grid[i][MAX_LENGTH-1] = {id: 1, data: undefined};
+        grid[i][0] = {nature: 'wall', data: undefined};
+        grid[i][MAX_LENGTH-1] = {nature: 'wall', data: undefined};
     }
 
     return grid;
 };
 
 const placePlayer = (grid) => {
-    grid[getRandomInt(1, MAX_HEIGHT-2)][getRandomInt(1, MAX_LENGTH-2)] = {id: 2, data: undefined};
-
+    // grid[getRandomInt(1, MAX_HEIGHT-2)][getRandomInt(1, MAX_LENGTH-2)] = {id: 2, data: undefined};
+    grid[5][5] = {nature: 'player', data: undefined};
     return grid;
 };
 
