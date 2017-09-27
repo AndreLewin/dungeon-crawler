@@ -13,7 +13,6 @@ import App from './app';
 import { APP_CONTAINER_SELECTOR } from '../shared/config';
 import { isProd } from '../shared/util';
 import weapons from './weapons';
-import monsters from './monsters';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL, createGrid, calculateGridNextGen } from './helpers'
 
 /* Actions */
@@ -107,11 +106,9 @@ const reducer = (state = initialState, action) => {
             const idTarget = state.getIn(['grid', targetPos.x, targetPos.y, 'nature']);
             switch(idTarget) {
                 case 'void':
-                    console.log("There is nothing there, you can go");
                     movePlayer();
                     break;
                 case 'wall':
-                    console.log("There is a wall, you can't go there");
                     break;
                 case 'recovery':
                     console.log("Here is 30% of your life");
@@ -126,11 +123,31 @@ const reducer = (state = initialState, action) => {
                         state = state.update('currentWeaponId', value => value + 1).set('weapon', Immutable.fromJS(weapons[currentWeaponId + 1]));
                     }
                     movePlayer();
-                    // TODO: Put common case behaviours in functions
+                    break;
+                case 'bug':
+                case 'paw':
+                case 'spy':
+                case 'military':
+
+                    const ennemyData = state.getIn(['grid', targetPos.x, targetPos.y, 'data']);
+                    const ennemyHp = ennemyData.get('hp');
+                    const attackPower = state.get('level') + state.get('weapon').get('atkBonus');
+                    const isDead = attackPower >= ennemyHp;
+
+                    console.log(attackPower);
+                    console.log(ennemyHp);
+                    console.log(attackPower);
+
+                    // Damage the ennemy
+
+                    // If dead, receive xp, if boss win else move player
+
+                    // If not dead, take damages
+
+
                     break;
             }
 
-            console.log(action.payload);
             console.log(targetPos);
             return state;
         }

@@ -1,18 +1,18 @@
+// config.js
 export const XP_PER_LEVEL = 10;
 export const DEFAULT_HP = 5;
 export const HP_PER_LEVEL = 5;
 
-export const idMap = {0: 'void', 1: 'wall', 2: 'player'};
-
+// map.js
 const MAX_LENGTH = 20;
 const MAX_HEIGHT = 20;
 const PROBABILITY_WALL = 1/6;
+
+// items.js
 const MAX_RECOVERIES = 10;
 const MAX_UPGRADES = 4;
-const MAX_BUG = 5;
-const MAX_PAW = 5;
-const MAX_SPY = 5;
-const MAX_MILITARY = 1;
+
+import monsters from './monsters';
 
 export const createGrid = () => {
     let grid = new Array(MAX_HEIGHT);
@@ -27,10 +27,9 @@ export const createGrid = () => {
     grid = placePlayer(grid);
     grid = place('recovery', MAX_RECOVERIES, grid);
     grid = place('upgrade', MAX_UPGRADES, grid);
-    grid = place('bug', MAX_BUG, grid);
-    grid = place('paw', MAX_PAW, grid);
-    grid = place('spy', MAX_SPY, grid);
-    grid = place('military', MAX_MILITARY, grid);
+    for (let i = 0 ; i < monsters.length ; i++) {
+        grid = place(monsters[i].id, monsters[i].max, grid, monsters[i].data);
+    }
     return grid;
 };
 
@@ -61,7 +60,7 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const place = (nature, numberMax, grid) => {
+const place = (nature, numberMax, grid, data=undefined) => {
     let nb = 0;
 
     while (nb < numberMax) {
@@ -69,68 +68,10 @@ const place = (nature, numberMax, grid) => {
         const randomY = getRandomInt(0, MAX_LENGTH-1);
 
         if (grid[randomX][randomY].nature === 'void') {
-            grid[randomX][randomY] = {nature: nature, data: undefined};
+            grid[randomX][randomY] = {nature: nature, data: data};
             nb++;
         }
     }
     return grid;
 };
 
-
-/*
-export const createGrid = (random) => {
-    const grid = new Array(MAX_HEIGHT);
-    for (let i = 0; i < MAX_HEIGHT; i++) {
-        grid[i] = new Array(MAX_LENGTH);
-        for (let j = 0; j < MAX_LENGTH; j++) {
-            grid[i][j] = random && Math.random() < PROBABILITY_ALIVE;
-        }
-    }
-    return grid;
-};
-*/
-
-
-export const calculateGridNextGen = (grid) => {
-    const nextGrid = JSON.parse(JSON.stringify(grid));
-    for (let i = 0; i < MAX_HEIGHT; i++) {
-        for (let j = 0; j < MAX_LENGTH; j++) {
-            const nbNeighbors = calculateNeighbors(grid, i, j);
-            nextGrid[i][j] = (nbNeighbors === 3) || (nbNeighbors === 2 && grid[i][j] === true);
-        }
-    }
-    return nextGrid;
-};
-
-const calculateNeighbors = (grid, i, j) => {
-    let nbNeighbors = 0;
-
-    if (grid[sphereGrid(i-1)][sphereGrid(j-1)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i-1)][sphereGrid(j)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i-1)][sphereGrid(j+1)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i)][sphereGrid(j-1)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i)][sphereGrid(j+1)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i+1)][sphereGrid(j-1)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i+1)][sphereGrid(j)])
-        nbNeighbors++;
-    if (grid[sphereGrid(i+1)][sphereGrid(j+1)])
-        nbNeighbors++;
-
-    return nbNeighbors;
-};
-
-const sphereGrid = (x) => {
-    if (x >= MAX_HEIGHT) {
-        return 0;
-    } else if (x < 0) {
-        return MAX_HEIGHT - 1;
-    } else {
-        return x;
-    }
-};
