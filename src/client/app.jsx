@@ -4,7 +4,7 @@ import { Icon, Label, Progress, Segment, Header, Button, Divider, Grid, Table } 
 
 import '../../public/style/style.scss';
 import { APP_NAME } from '../shared/config';
-import { giveXPAC, giveHPAC, removeHPAC, upgradeWeaponAC, moveAC } from './index';
+import { giveXPAC, giveHPAC, removeHPAC, upgradeWeaponAC, moveAC, restartAC } from './index';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL } from './helpers'
 
 const HeaderCn = () => (
@@ -13,6 +13,9 @@ const HeaderCn = () => (
         <Header.Content>
             {APP_NAME}
         </Header.Content>
+        <Header.Subheader>
+            Destroy the secret warplane!
+        </Header.Subheader>
     </Header>
 );
 
@@ -65,9 +68,10 @@ const BarsCn = connect (
 )(BarsCom);
 
 
-const ButtonsCom = ({ hp, handleXPClick, handleHPClick, handleRHPClick, handleUpgradeClick, handleNextGeneration }) => (
+const ButtonsCom = ({ hp, win, handleXPClick, handleHPClick, handleRHPClick, handleUpgradeClick, handleNextGeneration, handleRestartClick }) => (
     <div>
-        {hp===0 && <Button content='You are dead'/>}
+        {hp===0 && <Button icon='repeat' content='You are dead, press to try again' onClick={handleRestartClick} />}
+        {win===true && <Button icon='hand victory' content='You won, press to restart!' onClick={handleRestartClick} />}
         <Button icon='play' content='Give XP' onClick={handleXPClick} />
         <Button icon='pause' content='Give HP' onClick={handleHPClick} />
         <Button icon='bomb' content='Remove HP' onClick={handleRHPClick} />
@@ -77,12 +81,14 @@ const ButtonsCom = ({ hp, handleXPClick, handleHPClick, handleRHPClick, handleUp
 const ButtonsCn = connect(
     state => ({
         hp: state.get('hp'),
+        win: state.get('win')
     }),
     dispatch => ({
         handleXPClick: () => { dispatch(giveXPAC(1)) },
         handleHPClick: () => { dispatch(giveHPAC(1)) },
         handleRHPClick: () => { dispatch(removeHPAC(1)) },
-        handleUpgradeClick: () => { dispatch(upgradeWeaponAC()) }
+        handleUpgradeClick: () => { dispatch(upgradeWeaponAC()) },
+        handleRestartClick: () => { dispatch(restartAC())}
     })
 )(ButtonsCom);
 
@@ -98,10 +104,10 @@ const Square = ({ nature }) => {
             iconToReturn = <Icon name='user' />;
             break;
         case 'recovery':
-            iconToReturn = <Icon name='heart' color='red' />;
+            iconToReturn = <Icon name='medkit' color='red' />;
             break;
         case 'upgrade':
-            iconToReturn = <Icon name='lightning' color='yellow' />;
+            iconToReturn = <Icon name='trash' color='yellow' />;
             break;
     }
 

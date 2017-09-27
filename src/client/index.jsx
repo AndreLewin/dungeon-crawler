@@ -13,6 +13,7 @@ import App from './app';
 import { APP_CONTAINER_SELECTOR } from '../shared/config';
 import { isProd } from '../shared/util';
 import weapons from './weapons';
+import monsters from './monsters';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL, createGrid, calculateGridNextGen } from './helpers'
 
 /* Actions */
@@ -26,10 +27,13 @@ const UPGRADE_WEAPON = 'UPGRADE_WEAPON';
 export const upgradeWeaponAC = createAction(UPGRADE_WEAPON);
 const MOVE = 'MOVE';
 export const moveAC = createAction(MOVE);
+const RESTART = 'RESTART';
+export const restartAC = createAction(RESTART);
 
 /* Reducer */
 // Answers to store.dispatch(ACTION);
 const initialState = Immutable.fromJS({
+    win: false,
     level: 1,
     hp: 10,
     xpTot: 0,
@@ -41,15 +45,12 @@ const initialState = Immutable.fromJS({
     // TODO: set x y to position = {x, y}
     grid: createGrid()
 
-    // Array[30][30] of {id: 0, data: {icon: , hp:  , level: , xpDrop: }}
-    // 0 = Free space ; 1 = Wall ; 2 = Player ; 3 = Weapon (has data) ; 4 = Potion (has data) ; 5 = Monster (has data)
-    // The Id tells what action walking toward a square will dispatch
-
-    // 12 : Night working on states
 });
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
+        case RESTART:
+            return initialState;
         case GIVE_XP: {
             const newState = state.update('xpTot', value => value + action.payload);
 
