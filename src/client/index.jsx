@@ -48,7 +48,8 @@ const initialState = Immutable.fromJS({
 
 const reducer = (state = initialState, action) => {
     const receiveDamages = (damages) => {
-        return state.update('hp', value => (value - damages <= 0) ? 0 : value - damages );
+        const randomExtraDamage = Math.floor(Math.random() * 2);
+        return state.update('hp', value => (value - damages - randomExtraDamage <= 0) ? 0 : value - damages - randomExtraDamage );
     };
 
     const receiveXp = (xpGained) => {
@@ -110,8 +111,8 @@ const reducer = (state = initialState, action) => {
             };
 
             // What is the player trying to walk into?
-            const idTarget = state.getIn(['grid', targetPos.x, targetPos.y, 'nature']);
-            switch(idTarget) {
+            const natureTarget = state.getIn(['grid', targetPos.x, targetPos.y, 'nature']);
+            switch(natureTarget) {
                 case 'void':
                     movePlayer();
                     break;
@@ -140,24 +141,26 @@ const reducer = (state = initialState, action) => {
                     const ennemyHp = ennemyData.get('hp');
                     const ennemyLevel = ennemyData.get('level');
                     const attackPower = state.get('level') + state.get('weapon').get('atkBonus');
-                    const isDead = attackPower >= ennemyHp;
+                    const randomExtraDamage = Math.floor(Math.random() * 2);
+                    const isDead = attackPower + randomExtraDamage >= ennemyHp;
 
                     console.log("Ennemy lives before attack: " + ennemyHp);
 
                     // Damage the ennemy
-                    state = state.updateIn(['grid', targetPos.x, targetPos.y, 'data', 'hp'], value => value -= attackPower);
+                    state = state.updateIn(['grid', targetPos.x, targetPos.y, 'data', 'hp'], value => value -= (attackPower + randomExtraDamage));
 
                     // If dead, receive xp, if boss win else move player
                     // If not dead, take damages
                     if (isDead) {
                         state = receiveXp(ennemyLevel);
                         movePlayer();
+                        if (natureTarget === 'military') {
+                            state = state.set('win', true);
+                        }
                     } else {
                         state = receiveDamages(ennemyLevel);
                         console.log("Ennemy not dead");
                     }
-
-
                     break;
             }
 

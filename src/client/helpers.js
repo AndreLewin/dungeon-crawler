@@ -50,11 +50,9 @@ const drawBorders = (grid) => {
 };
 
 const placePlayer = (grid) => {
-    // grid[getRandomInt(1, MAX_HEIGHT-2)][getRandomInt(1, MAX_LENGTH-2)] = {id: 2, data: undefined};
     grid[5][5] = {nature: 'player', data: undefined};
     return grid;
 };
-
 
 const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;

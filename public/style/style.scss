@@ -39,12 +39,8 @@ $animation: 0.5s linear;
       width: $cellSize;
     }
 
-    .dead {
-      background: #f4f4f4;
-    }
-
-    .alive {
-      background: green;
+    .hide {
+      visibility: hidden
     }
   }
 }

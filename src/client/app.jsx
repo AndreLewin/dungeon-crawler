@@ -71,6 +71,7 @@ const BarsCn = connect (
 const ButtonsCom = ({ hp, win, handleXPClick, handleHPClick, handleRHPClick, handleUpgradeClick, handleNextGeneration, handleRestartClick }) => (
     <div>
         {hp===0 && <Button icon='repeat' content='You are dead, press to try again' onClick={handleRestartClick} />}
+        {hp>0 && win===false && <Button icon='repeat' content='Press to restart' onClick={handleRestartClick} />}
         {win===true && <Button icon='hand victory' content='You won, press to restart!' onClick={handleRestartClick} />}
         <Button icon='play' content='Give XP' onClick={handleXPClick} />
         <Button icon='pause' content='Give HP' onClick={handleHPClick} />
@@ -93,8 +94,11 @@ const ButtonsCn = connect(
 )(ButtonsCom);
 
 
-const Square = ({ nature }) => {
+const Square = ({ nature, row, column, playerX, playerY }) => {
     let iconToReturn;
+    let distanceToPlay; // TODO
+
+    const isTooFarToSee = false;
 
     switch(nature) {
         case 'wall':
@@ -128,7 +132,7 @@ const Square = ({ nature }) => {
             break;
     }
 
-    return <td>{iconToReturn}</td>;
+    return <td>{iconToReturn}</td>; // className='hide' if too far from the player
 };
 const BoardCom = ({ grid }) => {
     return (
