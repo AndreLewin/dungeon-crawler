@@ -47,26 +47,33 @@ const initialState = Immutable.fromJS({
 });
 
 const reducer = (state = initialState, action) => {
+    const receiveDamages = (damages) => {
+        return state.update('hp', value => (value - damages <= 0) ? 0 : value - damages );
+    };
+
+    const receiveXp = (xpGained) => {
+        const newState = state.update('xpTot', value => value + xpGained);
+
+        let xpLeft = newState.get('xpTot');
+        let level = 1;
+
+        while (xpLeft >= level*XP_PER_LEVEL) {
+            xpLeft -= level*XP_PER_LEVEL;
+            level += 1;
+        }
+
+        return newState.set('level', level).set('xp', xpLeft);
+    };
+
     switch (action.type) {
         case RESTART:
             return initialState; // Does not create new grid, so easier after death
-        case GIVE_XP: {
-            const newState = state.update('xpTot', value => value + action.payload);
-
-            let xpLeft = newState.get('xpTot');
-            let level = 1;
-
-            while (xpLeft >= level*XP_PER_LEVEL) {
-                xpLeft -= level*XP_PER_LEVEL;
-                level += 1;
-            }
-
-            return newState.set('level', level).set('xp', xpLeft);
-        }
+        case GIVE_XP:
+            return receiveXp(action.payload);
         case GIVE_HP:
             return state.update('hp', value => (value + action.payload > DEFAULT_HP+state.get('level')*HP_PER_LEVEL) ? DEFAULT_HP+state.get('level')*HP_PER_LEVEL : value + action.payload );
         case REMOVE_HP:
-            return state.update('hp', value => (value - action.payload <= 0) ? 0 : value - action.payload );
+            return receiveDamages(action.payload);
         case UPGRADE_WEAPON: {
             const currentWeaponId = state.get('currentWeaponId');
             if (currentWeaponId < weapons.length - 1) {
@@ -131,18 +138,24 @@ const reducer = (state = initialState, action) => {
 
                     const ennemyData = state.getIn(['grid', targetPos.x, targetPos.y, 'data']);
                     const ennemyHp = ennemyData.get('hp');
+                    const ennemyLevel = ennemyData.get('level');
                     const attackPower = state.get('level') + state.get('weapon').get('atkBonus');
                     const isDead = attackPower >= ennemyHp;
 
-                    console.log(attackPower);
-                    console.log(ennemyHp);
-                    console.log(attackPower);
+                    console.log("Ennemy lives before attack: " + ennemyHp);
 
                     // Damage the ennemy
+                    state = state.updateIn(['grid', targetPos.x, targetPos.y, 'data', 'hp'], value => value -= attackPower);
 
                     // If dead, receive xp, if boss win else move player
-
                     // If not dead, take damages
+                    if (isDead) {
+                        state = receiveXp(ennemyLevel);
+                        movePlayer();
+                    } else {
+                        state = receiveDamages(ennemyLevel);
+                        console.log("Ennemy not dead");
+                    }
 
 
                     break;

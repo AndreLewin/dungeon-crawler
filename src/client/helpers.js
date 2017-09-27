@@ -1,5 +1,5 @@
 // config.js
-export const XP_PER_LEVEL = 10;
+export const XP_PER_LEVEL = 3;
 export const DEFAULT_HP = 5;
 export const HP_PER_LEVEL = 5;
 
