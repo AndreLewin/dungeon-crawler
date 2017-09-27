@@ -97,6 +97,12 @@ const Square = ({ nature }) => {
         case 'player':
             iconToReturn = <Icon name='user' />;
             break;
+        case 'recovery':
+            iconToReturn = <Icon name='heart' color='red' />;
+            break;
+        case 'upgrade':
+            iconToReturn = <Icon name='lightning' color='yellow' />;
+            break;
     }
 
     return <td>{iconToReturn}</td>;

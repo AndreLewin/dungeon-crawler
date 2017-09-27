@@ -7,6 +7,8 @@ export const idMap = {0: 'void', 1: 'wall', 2: 'player'};
 const MAX_LENGTH = 20;
 const MAX_HEIGHT = 20;
 const PROBABILITY_WALL = 1/6;
+const MAX_RECOVERIES = 10;
+const MAX_UPGRADES = 4;
 
 export const createGrid = () => {
     let grid = new Array(MAX_HEIGHT);
@@ -19,6 +21,8 @@ export const createGrid = () => {
 
     grid = drawBorders(grid);
     grid = placePlayer(grid);
+    grid = placeRecoveries(grid);
+    grid = placeUpgrades(grid);
     return grid;
 };
 
@@ -41,6 +45,36 @@ const drawBorders = (grid) => {
 const placePlayer = (grid) => {
     // grid[getRandomInt(1, MAX_HEIGHT-2)][getRandomInt(1, MAX_LENGTH-2)] = {id: 2, data: undefined};
     grid[5][5] = {nature: 'player', data: undefined};
+    return grid;
+};
+
+const placeRecoveries = (grid) => {
+    let nbRecoveries = 0;
+
+    while (nbRecoveries < MAX_RECOVERIES) {
+        const randomX = getRandomInt(0, MAX_HEIGHT-1);
+        const randomY = getRandomInt(0, MAX_LENGTH-1);
+
+        if (grid[randomX][randomY].nature === 'void') {
+            grid[randomX][randomY] = {nature: 'recovery', data: undefined};
+            nbRecoveries++;
+        }
+    }
+    return grid;
+};
+
+const placeUpgrades = (grid) => {
+    let nbUpgrades = 0;
+
+    while (nbUpgrades < MAX_UPGRADES) {
+        const randomX = getRandomInt(0, MAX_HEIGHT-1);
+        const randomY = getRandomInt(0, MAX_LENGTH-1);
+
+        if (grid[randomX][randomY].nature === 'void') {
+            grid[randomX][randomY] = {nature: 'upgrade', data: undefined};
+            nbUpgrades++;
+        }
+    }
     return grid;
 };
 

@@ -112,9 +112,23 @@ const reducer = (state = initialState, action) => {
                 case 'wall':
                     console.log("There is a wall, you can't go there");
                     break;
+                case 'recovery':
+                    console.log("Here is 30% of your life");
+                    const hpTot = DEFAULT_HP+state.get('level')*HP_PER_LEVEL;
+                    const hpRecovered = Math.floor(hpTot/3);
+                    state = state.update('hp', value => (value + hpRecovered > hpTot) ? hpTot : value + hpRecovered );
+                    movePlayer();
+                    break;
+                case 'upgrade':
+                    const currentWeaponId = state.get('currentWeaponId');
+                    if (currentWeaponId < weapons.length - 1) {
+                        state = state.update('currentWeaponId', value => value + 1).set('weapon', Immutable.fromJS(weapons[currentWeaponId + 1]));
+                    }
+                    movePlayer();
+                    // TODO: Put common case behaviours in functions
+                    break;
             }
 
-            
             console.log(action.payload);
             console.log(targetPos);
             return state;
