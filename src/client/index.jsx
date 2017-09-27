@@ -50,7 +50,7 @@ const initialState = Immutable.fromJS({
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case RESTART:
-            return initialState;
+            return initialState; // Does not create new grid, so easier after death
         case GIVE_XP: {
             const newState = state.update('xpTot', value => value + action.payload);
 

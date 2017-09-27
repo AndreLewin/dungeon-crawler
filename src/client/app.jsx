@@ -12,10 +12,10 @@ const HeaderCn = () => (
         <Icon name='compass' />
         <Header.Content>
             {APP_NAME}
+            <Header.Subheader>
+                Destroy the secret warplane!
+            </Header.Subheader>
         </Header.Content>
-        <Header.Subheader>
-            Destroy the secret warplane!
-        </Header.Subheader>
     </Header>
 );
 
@@ -108,6 +108,23 @@ const Square = ({ nature }) => {
             break;
         case 'upgrade':
             iconToReturn = <Icon name='trash' color='yellow' />;
+            break;
+        case 'bug':
+            iconToReturn = <Icon name='bug' color='purple' />;
+            break;
+        case 'paw':
+            iconToReturn = <Icon name='paw' color='purple' />;
+            break;
+        case 'spy':
+            iconToReturn = <Icon name='spy' color='purple' />;
+            break;
+        case 'military':
+            iconToReturn = (
+                <Icon.Group>
+                    <Icon loading name='sun' color='red' />
+                    <Icon name='military' color='purple' />
+                </Icon.Group>
+            );
             break;
     }
 

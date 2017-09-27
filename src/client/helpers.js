@@ -9,6 +9,10 @@ const MAX_HEIGHT = 20;
 const PROBABILITY_WALL = 1/6;
 const MAX_RECOVERIES = 10;
 const MAX_UPGRADES = 4;
+const MAX_BUG = 5;
+const MAX_PAW = 5;
+const MAX_SPY = 5;
+const MAX_MILITARY = 1;
 
 export const createGrid = () => {
     let grid = new Array(MAX_HEIGHT);
@@ -21,8 +25,12 @@ export const createGrid = () => {
 
     grid = drawBorders(grid);
     grid = placePlayer(grid);
-    grid = placeRecoveries(grid);
-    grid = placeUpgrades(grid);
+    grid = place('recovery', MAX_RECOVERIES, grid);
+    grid = place('upgrade', MAX_UPGRADES, grid);
+    grid = place('bug', MAX_BUG, grid);
+    grid = place('paw', MAX_PAW, grid);
+    grid = place('spy', MAX_SPY, grid);
+    grid = place('military', MAX_MILITARY, grid);
     return grid;
 };
 
@@ -48,39 +56,26 @@ const placePlayer = (grid) => {
     return grid;
 };
 
-const placeRecoveries = (grid) => {
-    let nbRecoveries = 0;
-
-    while (nbRecoveries < MAX_RECOVERIES) {
-        const randomX = getRandomInt(0, MAX_HEIGHT-1);
-        const randomY = getRandomInt(0, MAX_LENGTH-1);
-
-        if (grid[randomX][randomY].nature === 'void') {
-            grid[randomX][randomY] = {nature: 'recovery', data: undefined};
-            nbRecoveries++;
-        }
-    }
-    return grid;
-};
-
-const placeUpgrades = (grid) => {
-    let nbUpgrades = 0;
-
-    while (nbUpgrades < MAX_UPGRADES) {
-        const randomX = getRandomInt(0, MAX_HEIGHT-1);
-        const randomY = getRandomInt(0, MAX_LENGTH-1);
-
-        if (grid[randomX][randomY].nature === 'void') {
-            grid[randomX][randomY] = {nature: 'upgrade', data: undefined};
-            nbUpgrades++;
-        }
-    }
-    return grid;
-};
 
 const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+const place = (nature, numberMax, grid) => {
+    let nb = 0;
+
+    while (nb < numberMax) {
+        const randomX = getRandomInt(0, MAX_HEIGHT-1);
+        const randomY = getRandomInt(0, MAX_LENGTH-1);
+
+        if (grid[randomX][randomY].nature === 'void') {
+            grid[randomX][randomY] = {nature: nature, data: undefined};
+            nb++;
+        }
+    }
+    return grid;
+};
+
 
 /*
 export const createGrid = (random) => {
