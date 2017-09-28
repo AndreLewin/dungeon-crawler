@@ -3,22 +3,20 @@ import { connect } from 'react-redux';
 import { Icon, Label, Progress, Header, Button } from 'semantic-ui-react';
 
 import '../../public/style/style.scss';
-import { APP_NAME } from '../shared/config';
-import { moveAC, restartAC, newMapAC } from './index';
-import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL } from './helpers'
+import { moveAC, newMapAC } from './index';
+import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL, VISION_REACH } from './config'
 
 const HeaderCn = () => (
     <Header as='h2'>
         <Icon name='compass' />
         <Header.Content>
-            {APP_NAME}
+            Dungeon Crawler
             <Header.Subheader>
                 Destroy the secret warplane!
             </Header.Subheader>
         </Header.Content>
     </Header>
 );
-
 
 const LabelsCom = ({ level, weapon }) => (
     <div>
@@ -68,12 +66,11 @@ const BarsCn = connect (
 )(BarsCom);
 
 
-const ButtonsCom = ({ hp, win, handleRestartClick, handleNewMapClick }) => (
+const ButtonsCom = ({ hp, win, handleNewMapClick }) => (
     <div>
-        {hp===0 && <Button icon='repeat' content='You are dead, press to try again' onClick={handleRestartClick} />}
-        {hp>0 && win===false && <Button icon='repeat' content='Press to restart' onClick={handleRestartClick} />}
-        {win===true && <Button icon='hand victory' content='You won, press to restart!' onClick={handleRestartClick} />}
-        <Button icon='add square' content='Use a new map' onClick={handleNewMapClick} />
+        {hp===0 && <Button icon='repeat' content='You are dead, press to try again' onClick={handleNewMapClick} />}
+        {hp>0 && win===false && <Button icon='repeat' content='Press to restart' onClick={handleNewMapClick} />}
+        {win===true && <Button icon='hand victory' content='You won, press to restart!' onClick={handleNewMapClick} />}
     </div>
 );
 const ButtonsCn = connect(
@@ -82,7 +79,6 @@ const ButtonsCn = connect(
         win: state.get('win')
     }),
     dispatch => ({
-        handleRestartClick: () => { dispatch(restartAC())},
         handleNewMapClick: () => {dispatch(newMapAC())}
     })
 )(ButtonsCom);
@@ -90,8 +86,8 @@ const ButtonsCn = connect(
 
 const Square = ({ nature, row, column, playerX, playerY, hp }) => {
     let iconToReturn;
-    const distanceToPlayer = Math.sqrt(Math.pow(row - playerX, 2) + Math.pow(column - playerY , 2))// TODO
-    const isTooFarToSee = distanceToPlayer > 3;
+    const distanceToPlayer = Math.sqrt(Math.pow(row - playerX, 2) + Math.pow(column - playerY , 2))
+    const isTooFarToSee = distanceToPlayer > VISION_REACH;
 
     switch(nature) {
         case 'wall':
@@ -125,7 +121,7 @@ const Square = ({ nature, row, column, playerX, playerY, hp }) => {
             break;
     }
 
-    return <td className={isTooFarToSee && 'hide'}>{iconToReturn}</td>; // className='hide' if too far from the player
+    return <td className={isTooFarToSee && 'hide'}>{iconToReturn}</td>;
 };
 const BoardCom = ({ grid, playerX, playerY, hp }) => {
     return (

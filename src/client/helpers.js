@@ -1,17 +1,5 @@
-// config.js
-export const XP_PER_LEVEL = 3;
-export const DEFAULT_HP = 5;
-export const HP_PER_LEVEL = 5;
-
-// map.js
-const MAX_LENGTH = 20;
-const MAX_HEIGHT = 20;
-const PROBABILITY_WALL = 1/6;
-
-// items.js
-const MAX_RECOVERIES = 10;
-const MAX_UPGRADES = 4;
-
+import {MAX_LENGTH, MAX_HEIGHT, PROBABILITY_WALL, XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL} from './config';
+import items from './items';
 import monsters from './monsters';
 
 export const createGrid = () => {
@@ -25,8 +13,9 @@ export const createGrid = () => {
 
     grid = drawBorders(grid);
     grid = placePlayer(grid);
-    grid = place('recovery', MAX_RECOVERIES, grid);
-    grid = place('upgrade', MAX_UPGRADES, grid);
+    for (let i = 0 ; i < items.length ; i++) {
+        grid = place(items[i].id, items[i].max, grid);
+    }
     for (let i = 0 ; i < monsters.length ; i++) {
         grid = place(monsters[i].id, monsters[i].max, grid, monsters[i].data);
     }
