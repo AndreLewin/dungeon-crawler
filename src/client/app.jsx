@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Icon, Label, Progress, Segment, Header, Button, Divider, Grid, Table } from 'semantic-ui-react';
+import { Icon, Label, Progress, Header, Button } from 'semantic-ui-react';
 
 import '../../public/style/style.scss';
 import { APP_NAME } from '../shared/config';
-import { giveXPAC, giveHPAC, removeHPAC, upgradeWeaponAC, moveAC, restartAC } from './index';
+import { moveAC, restartAC, newMapAC } from './index';
 import { XP_PER_LEVEL, DEFAULT_HP, HP_PER_LEVEL } from './helpers'
 
 const HeaderCn = () => (
@@ -68,15 +68,12 @@ const BarsCn = connect (
 )(BarsCom);
 
 
-const ButtonsCom = ({ hp, win, handleXPClick, handleHPClick, handleRHPClick, handleUpgradeClick, handleNextGeneration, handleRestartClick }) => (
+const ButtonsCom = ({ hp, win, handleRestartClick, handleNewMapClick }) => (
     <div>
         {hp===0 && <Button icon='repeat' content='You are dead, press to try again' onClick={handleRestartClick} />}
         {hp>0 && win===false && <Button icon='repeat' content='Press to restart' onClick={handleRestartClick} />}
         {win===true && <Button icon='hand victory' content='You won, press to restart!' onClick={handleRestartClick} />}
-        <Button icon='play' content='Give XP' onClick={handleXPClick} />
-        <Button icon='pause' content='Give HP' onClick={handleHPClick} />
-        <Button icon='bomb' content='Remove HP' onClick={handleRHPClick} />
-        <Button icon='shuffle' content='Upgrade Weapon' onClick={handleUpgradeClick} />
+        <Button icon='add square' content='Use a new map' onClick={handleNewMapClick} />
     </div>
 );
 const ButtonsCn = connect(
@@ -85,27 +82,23 @@ const ButtonsCn = connect(
         win: state.get('win')
     }),
     dispatch => ({
-        handleXPClick: () => { dispatch(giveXPAC(1)) },
-        handleHPClick: () => { dispatch(giveHPAC(1)) },
-        handleRHPClick: () => { dispatch(removeHPAC(1)) },
-        handleUpgradeClick: () => { dispatch(upgradeWeaponAC()) },
-        handleRestartClick: () => { dispatch(restartAC())}
+        handleRestartClick: () => { dispatch(restartAC())},
+        handleNewMapClick: () => {dispatch(newMapAC())}
     })
 )(ButtonsCom);
 
 
-const Square = ({ nature, row, column, playerX, playerY }) => {
+const Square = ({ nature, row, column, playerX, playerY, hp }) => {
     let iconToReturn;
-    let distanceToPlay; // TODO
-
-    const isTooFarToSee = false;
+    const distanceToPlayer = Math.sqrt(Math.pow(row - playerX, 2) + Math.pow(column - playerY , 2))// TODO
+    const isTooFarToSee = distanceToPlayer > 3;
 
     switch(nature) {
         case 'wall':
             iconToReturn = <Icon name='align justify' disabled />;
             break;
         case 'player':
-            iconToReturn = <Icon name='user' />;
+            iconToReturn = <Icon name='user' disabled={hp===0} />;
             break;
         case 'recovery':
             iconToReturn = <Icon name='medkit' color='red' />;
@@ -132,9 +125,9 @@ const Square = ({ nature, row, column, playerX, playerY }) => {
             break;
     }
 
-    return <td>{iconToReturn}</td>; // className='hide' if too far from the player
+    return <td className={isTooFarToSee && 'hide'}>{iconToReturn}</td>; // className='hide' if too far from the player
 };
-const BoardCom = ({ grid }) => {
+const BoardCom = ({ grid, playerX, playerY, hp }) => {
     return (
         <div className='Board' >
             <table>
@@ -147,6 +140,9 @@ const BoardCom = ({ grid }) => {
                                     key={j}
                                     row={i}
                                     column={j}
+                                    playerX={playerX}
+                                    playerY={playerY}
+                                    hp={hp}
                                 />
                             ))}
                         </tr>
@@ -159,6 +155,9 @@ const BoardCom = ({ grid }) => {
 const BoardCn = connect(
     state => ({
         grid: state.get('grid'),
+        playerX: state.get('x'),
+        playerY: state.get('y'),
+        hp: state.get('hp')
     })
 )(BoardCom);
 

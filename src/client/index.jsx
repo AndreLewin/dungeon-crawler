@@ -28,6 +28,8 @@ const MOVE = 'MOVE';
 export const moveAC = createAction(MOVE);
 const RESTART = 'RESTART';
 export const restartAC = createAction(RESTART);
+const NEW_MAP = 'NEW_MAP';
+export const newMapAC = createAction(NEW_MAP);
 
 /* Reducer */
 // Answers to store.dispatch(ACTION);
@@ -41,7 +43,6 @@ const initialState = Immutable.fromJS({
     weapon: weapons[0],
     x: 5, // x is going down
     y: 5, // y is going right
-    // TODO: set x y to position = {x, y}
     grid: createGrid()
 
 });
@@ -68,7 +69,9 @@ const reducer = (state = initialState, action) => {
 
     switch (action.type) {
         case RESTART:
-            return initialState; // Does not create new grid, so easier after death
+            return initialState;
+        case NEW_MAP:
+            return initialState.set('grid', Immutable.fromJS(createGrid()));
         case GIVE_XP:
             return receiveXp(action.payload);
         case GIVE_HP:
@@ -172,11 +175,9 @@ const reducer = (state = initialState, action) => {
     }
 };
 
-
 /* Store */
 const store = createStore(reducer,
     isProd ? undefined : window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-
 
 /* Rendering */
 const rootEl = document.querySelector(APP_CONTAINER_SELECTOR);
